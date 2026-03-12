@@ -1,0 +1,29 @@
+[project]
+name = "gonggomoon-ai"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "boto3>=1.37.0,<2.0.0",
+    "fastapi>=0.129.0,<0.130.0",
+    "google-genai>=1.0.0,<2.0.0",
+    "psycopg[binary]>=3.3.3",
+    "pydantic>=2.11.0,<3.0.0",
+    "pymupdf>=1.24.0,<2.0.0",
+    "python-dotenv>=1.2.2",
+    "redis>=5.2.0,<6.0.0",
+    "sqlalchemy>=2.0.48",
+    "sqlmodel>=0.0.37",
+    "uvicorn[standard]>=0.35.0,<0.36.0",
+]
+
+[project.scripts]
+run-api = "main:main"
+run-worker = "app.worker.main:main"
+
+[dependency-groups]
+dev = [
+    "httpx>=0.28.0,<0.29.0",
+    "pytest>=8.3.0,<9.0.0",
+]

@@ -1,0 +1,13 @@
+from enum import StrEnum
+
+# 요청 오는 작업의 종류와 상태를 나타내는 Enum 클래스
+class JobType(StrEnum):
+    EXPERIENCE_EXTRACTION = "EXPERIENCE_EXTRACTION"
+
+# 응답 및 작업 처리 결과의 상태를 나타내는 Enum 클래스
+class JobStatus(StrEnum):
+    PENDING = "PENDING"
+    QUEUED = "QUEUED"
+    PROCESSING = "PROCESSING"
+    COMPLETED = "COMPLETED"
+    FAILED = "FAILED"
