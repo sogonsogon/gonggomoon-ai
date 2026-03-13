@@ -15,3 +15,7 @@ wheels/
 
 # .env files
 .env
+.env.deploy
+
+# deploy docker-compose.yml
+docker-compose.deploy.yml
