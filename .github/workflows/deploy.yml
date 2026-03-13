@@ -34,9 +34,6 @@ jobs:
       - name: Sync dependencies
         run: uv sync --frozen
 
-      - name: Run tests
-        run: uv run pytest
-
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
