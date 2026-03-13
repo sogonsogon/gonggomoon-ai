@@ -72,7 +72,7 @@ jobs:
               "sed -i '\''s|^ECR_REGISTRY=.*|ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}|'\'' .env",
               "sed -i '\''s|^ECR_REPOSITORY=.*|ECR_REPOSITORY=${{ env.ECR_REPOSITORY }}|'\'' .env",
               "aws ecr get-login-password --region ${{ env.AWS_REGION }} | docker login --username AWS --password-stdin ${{ steps.login-ecr.outputs.registry }}",
-              "docker compose -f docker-compose.prod.yml pull",
-              "docker compose -f docker-compose.prod.yml up -d",
+              "docker compose -f docker-compose.yml pull",
+              "docker compose -f docker-compose.yml up -d",
               "docker image prune -af"
             ]'
