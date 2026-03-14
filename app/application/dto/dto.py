@@ -11,6 +11,7 @@ class PortfolioStrategyGenerationMessage(BaseModel):
     user_id: int
     portfolio_strategy_id: int
     experiences: list[dict]
+    position_type: str
     job_type: str = "PORTFOLIO_STRATEGY_GENERATION"
     industry_type: str
     callback_url: str | None = None

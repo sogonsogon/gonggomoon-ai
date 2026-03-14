@@ -14,6 +14,7 @@ class PortfolioStrategyGenerationService:
             user_id=request.user_id,
             portfolio_strategy_id=request.portfolio_strategy_id,
             experiences=request.experiences,
+            position_type=request.position_type,
             industry_type=request.industry_type,
             callback_url=self.callback_url
         )
