@@ -24,7 +24,11 @@ queue = RedisJobQueue(
 
 extracted_experience_repository = SqlAlchemyExtractedExperienceRepository(session_factory=session_factory)
 
-experience_extraction_service = ExperienceExtractionService(queue=queue, repository=extracted_experience_repository)
+experience_extraction_service = ExperienceExtractionService(
+    queue=queue, 
+    repository=extracted_experience_repository,
+    callback_url=settings.call_back_url + "/experience-extraction"
+)
 
 
 ###### Worker 관련 의존성 주입 ######
