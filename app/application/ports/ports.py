@@ -25,6 +25,9 @@ class ExperienceAnalyzerPort(Protocol):
     def analyze(self, resume_text: str) -> dict[str, Any]:
         ...
 
+class PortfolioStrategyGeneratorPort(Protocol):
+    def generate(self, experiences: list[dict], position_type: str, industry_type: str) -> dict[str, Any]:
+        ...
 
 class CallbackPort(Protocol):
     def send(self, callback_url: str, body: dict[str, Any]) -> None:

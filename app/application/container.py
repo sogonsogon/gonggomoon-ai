@@ -1,8 +1,10 @@
 from app.core.config import get_settings
 from app.domain.experience_extraction.processor import ExperienceExtractionProcessor
+from app.domain.portfolio_strategy_generation.processor import PortfolioStrategyProcessor
 from app.infrastructure.clients.callback_client import HttpCallbackClient
 from app.infrastructure.clients.file_store import S3FileStore
 from app.infrastructure.clients.llm_analyzer import GeminiExperienceAnalyzer
+from app.infrastructure.clients.llm_generator import GeminiPortfolioStrategyGenerator
 from app.infrastructure.queue.redis_queue import RedisJobQueue
 from app.worker.executor import WorkerExecutor
 from app.worker.handlers import JobHandler
@@ -52,8 +54,17 @@ file_asset_repository = SqlAlchemyFileAssetRepository(session_factory=session_fa
 
 text_extractor = PyMuPdfTextExtractor()
 
-analyzer = (
+experience_analyzer = (
     GeminiExperienceAnalyzer(
+        api_key=settings.gemini_api_key,
+        model=settings.gemini_model,
+    )
+    if settings.gemini_api_key
+    else Exception("Gemini API 키가 설정되어 있지 않습니다.")
+)
+
+portfolio_generator = (
+    GeminiPortfolioStrategyGenerator(
         api_key=settings.gemini_api_key,
         model=settings.gemini_model,
     )
@@ -64,12 +75,22 @@ analyzer = (
 # 경험 추출 프로세서 (pdf에서 경험을 추출하는 핵심 비즈니스 로직 담당)
 experience_processor = ExperienceExtractionProcessor(
     file_store=file_store,
-    analyzer=analyzer,
+    analyzer=experience_analyzer,
     text_extractor=text_extractor,
     file_asset_repository=file_asset_repository
 )
 
-job_handler = JobHandler(experience_processor=experience_processor)
+# 포트폴리오 전략 생성 프로세서 (경험 데이터를 바탕으로 포트폴리오 전략을 생성하는 핵심 비즈니스 로직 담당)
+portfolio_strategy_processor = PortfolioStrategyProcessor(
+    generator=portfolio_generator
+)
+
+job_handler = JobHandler(
+    experience_processor=experience_processor,
+    portfolio_strategy_processor=portfolio_strategy_processor
+)
+
+
 worker_executor = WorkerExecutor(
     queue=queue,
     handler=job_handler,

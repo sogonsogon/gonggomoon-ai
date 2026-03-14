@@ -1,17 +1,19 @@
 from pydantic import BaseModel
+from app.core.enums import JobType
 
-class ExtractedExperienceMessage(BaseModel):
-    id: int
+class BaseJobMessage(BaseModel):
+    id: int | None = None
     user_id: int
-    file_asset_id: int
-    job_type: str = "EXPERIENCE_EXTRACTION" # 작업 유형을 나타내는 필드 추가
+    job_type: JobType
     callback_url: str | None = None
 
-class PortfolioStrategyGenerationMessage(BaseModel):
-    user_id: int
-    portfolio_strategy_id: int
+
+class ExtractedExperienceMessage(BaseJobMessage):
+    file_asset_id: int
+    job_type: JobType = JobType.EXPERIENCE_EXTRACTION
+
+class PortfolioStrategyGenerationMessage(BaseJobMessage):
     experiences: list[dict]
     position_type: str
-    job_type: str = "PORTFOLIO_STRATEGY_GENERATION"
     industry_type: str
-    callback_url: str | None = None
+    job_type: JobType = JobType.PORTFOLIO_STRATEGY_GENERATION
