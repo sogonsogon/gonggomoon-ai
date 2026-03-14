@@ -83,17 +83,17 @@ jobs:
               "echo ===== DOCKER PULL LATEST =====",
               "sudo docker pull ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest",
               "echo ===== COMPOSE CONFIG =====",
-              "sudo docker-compose -f docker-compose.prod.yml config",
+              "sudo docker-compose -f docker-compose.yml config",
               "echo ===== COMPOSE PULL =====",
-              "sudo docker-compose -f docker-compose.prod.yml pull",
+              "sudo docker-compose -f docker-compose.yml pull",
               "echo ===== COMPOSE UP =====",
-              "sudo docker-compose -f docker-compose.prod.yml up -d",
+              "sudo docker-compose -f docker-compose.yml up -d",
               "echo ===== DOCKER PS =====",
               "sudo docker ps -a",
               "echo ===== DOCKER IMAGES =====",
               "sudo docker images",
               "echo ===== COMPOSE PS =====",
-              "sudo docker-compose -f docker-compose.prod.yml ps"
+              "sudo docker-compose -f docker-compose.yml ps"
             ]' \
             --query "Command.CommandId" \
             --output text)
