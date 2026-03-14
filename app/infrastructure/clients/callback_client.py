@@ -7,7 +7,7 @@ from app.application.ports.ports import CallbackPort
 
 class HttpCallbackClient(CallbackPort):
     def send(self, callback_url: str, body: dict[str, Any]) -> None:
-        print(f"log : starting to send callback to {callback_url} with body: {body}")
+        print(f"log : starting to send callback to {callback_url}")
 
         payload = json.dumps(body).encode("utf-8")
         req = request.Request(

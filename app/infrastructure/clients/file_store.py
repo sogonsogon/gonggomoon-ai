@@ -18,20 +18,9 @@ class S3FileStore(FileStorePort):
             config=Config(retries={"max_attempts": 3, "mode": "standard"}),
         )
 
-    # def download(self, file_asset_id: int) -> bytes:
-    #     key = self._build_key(file_asset_id)
-    #     response = self.client.get_object(Bucket=self.bucket, Key=key)
-    #     body = response["Body"].read()
-    #     return bytes(body)
-
     def download(self, file_key: str) -> bytes:
         key = file_key
-
-        print(f"[S3 CLIENT] endpoint={self.client.meta.endpoint_url}, region={self.client.meta.region_name}")
-        print(f"[S3 REQUEST] bucket={self.bucket!r}, key={key!r}")
-
-        sts = boto3.client("sts")
-        print(f"[AWS IDENTITY] {sts.get_caller_identity()}")
+        print("log : downloading file from S3 with key:", key)
 
         self.client.head_object(Bucket=self.bucket, Key=key)
         response = self.client.get_object(Bucket=self.bucket, Key=key)
