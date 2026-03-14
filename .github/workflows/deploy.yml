@@ -63,7 +63,7 @@ jobs:
             --document-name "AWS-RunShellScript" \
             --comment "Deploy AI server" \
             --parameters commands='[
-              "set -e",
+              "set -eux",
               "cd '"${{ env.DEPLOY_DIR }}"'",
               "pwd",
               "ls -al",
@@ -71,16 +71,35 @@ jobs:
               "sed -i '\''s|^IMAGE_TAG=.*|IMAGE_TAG=${{ env.IMAGE_TAG }}|'\'' .env",
               "sed -i '\''s|^ECR_REGISTRY=.*|ECR_REGISTRY=${{ steps.login-ecr.outputs.registry }}|'\'' .env",
               "sed -i '\''s|^ECR_REPOSITORY=.*|ECR_REPOSITORY=${{ env.ECR_REPOSITORY }}|'\'' .env",
-              "sudo aws ecr get-login-password --region ${{ env.AWS_REGION }} | sudo docker login --username AWS --password-stdin ${{ steps.login-ecr.outputs.registry }}",
-              "sudo docker compose -f docker-compose.prod.yml pull",
-              "sudo docker compose -f docker-compose.prod.yml up -d",
-              "sudo docker ps -a"
+              "echo ===== ENV AFTER =====",
+              "cat .env",
+              "echo ===== DOCKER COMPOSE VERSION =====",
+              "which docker-compose",
+              "sudo docker-compose --version",
+              "echo ===== AWS IDENTITY =====",
+              "aws sts get-caller-identity",
+              "echo ===== ECR LOGIN =====",
+              "aws ecr get-login-password --region ${{ env.AWS_REGION }} | sudo docker login --username AWS --password-stdin ${{ steps.login-ecr.outputs.registry }}",
+              "echo ===== DOCKER PULL LATEST =====",
+              "sudo docker pull ${{ steps.login-ecr.outputs.registry }}/${{ env.ECR_REPOSITORY }}:latest",
+              "echo ===== COMPOSE CONFIG =====",
+              "sudo docker-compose -f docker-compose.prod.yml config",
+              "echo ===== COMPOSE PULL =====",
+              "sudo docker-compose -f docker-compose.prod.yml pull",
+              "echo ===== COMPOSE UP =====",
+              "sudo docker-compose -f docker-compose.prod.yml up -d",
+              "echo ===== DOCKER PS =====",
+              "sudo docker ps -a",
+              "echo ===== DOCKER IMAGES =====",
+              "sudo docker images",
+              "echo ===== COMPOSE PS =====",
+              "sudo docker-compose -f docker-compose.prod.yml ps"
             ]' \
             --query "Command.CommandId" \
             --output text)
 
           echo "Command ID: $COMMAND_ID"
-          sleep 5
+          sleep 10
 
           aws ssm get-command-invocation \
             --command-id "$COMMAND_ID" \
