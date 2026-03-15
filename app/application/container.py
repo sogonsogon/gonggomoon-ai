@@ -1,10 +1,12 @@
 from app.core.config import get_settings
 from app.domain.experience_extraction.processor import ExperienceExtractionProcessor
 from app.domain.portfolio_strategy_generation.processor import PortfolioStrategyProcessor
+from app.domain.interview_strategy_generation.processor import InterviewStrategyProcessor
 from app.infrastructure.clients.callback_client import HttpCallbackClient
 from app.infrastructure.clients.file_store import S3FileStore
 from app.infrastructure.clients.llm_analyzer import GeminiExperienceAnalyzer
 from app.infrastructure.clients.llm_generator import GeminiPortfolioStrategyGenerator
+from app.infrastructure.clients.interview_generator import GeminiInterviewStrategyGenerator
 from app.infrastructure.queue.redis_queue import RedisJobQueue
 from app.worker.executor import WorkerExecutor
 from app.worker.handlers import JobHandler
@@ -14,6 +16,7 @@ from app.infrastructure.db.file_asset_repository import SqlAlchemyFileAssetRepos
 from app.infrastructure.db.extracted_experience_repository import SqlAlchemyExtractedExperienceRepository
 from app.application.services.experiece_extraction_service import ExperienceExtractionService
 from app.application.services.portfolio_strategy_generation_service import PortfolioStrategyGenerationService
+from app.application.services.interview_strategy_generation_service import InterviewStrategyGenerationService   
 
 settings = get_settings()
 session_factory = create_session_factory(settings.database_url)
@@ -35,6 +38,11 @@ experience_extraction_service = ExperienceExtractionService(
 portfolio_strategy_generation_service = PortfolioStrategyGenerationService(
     queue=queue,
     callback_url=settings.call_back_url + "/portfolio-strategy-generation"
+)
+
+interview_strategy_generation_service = InterviewStrategyGenerationService(
+    queue=queue,
+    callback_url=settings.call_back_url + "/interview-strategy-generation"
 )
 
 
@@ -72,6 +80,15 @@ portfolio_generator = (
     else Exception("Gemini API 키가 설정되어 있지 않습니다.")
 )
 
+interview_generator = (
+    GeminiInterviewStrategyGenerator(
+        api_key=settings.gemini_api_key,
+        model=settings.gemini_model,
+    )
+    if settings.gemini_api_key
+    else Exception("Gemini API 키가 설정되어 있지 않습니다.")
+)
+
 # 경험 추출 프로세서 (pdf에서 경험을 추출하는 핵심 비즈니스 로직 담당)
 experience_processor = ExperienceExtractionProcessor(
     file_store=file_store,
@@ -85,9 +102,18 @@ portfolio_strategy_processor = PortfolioStrategyProcessor(
     generator=portfolio_generator
 )
 
+# 면접 전략 생성 프로세서 (이력서 데이터를 바탕으로 면접 전략을 생성하는 핵심 비즈니스 로직 담당)
+interview_strategy_processor = InterviewStrategyProcessor(
+    file_storage=file_store,
+    text_extractor=text_extractor,
+    file_asset_repository=file_asset_repository,
+    generator=interview_generator
+)
+
 job_handler = JobHandler(
     experience_processor=experience_processor,
-    portfolio_strategy_processor=portfolio_strategy_processor
+    portfolio_strategy_processor=portfolio_strategy_processor,
+    interview_strategy_processor=interview_strategy_processor
 )
 
 

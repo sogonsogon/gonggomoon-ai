@@ -1,7 +1,7 @@
 from fastapi import FastAPI
 
 from app.api.routers.health import health_router
-from app.api.routers.extract_experience import jobs_router
+from app.api.routers.job_router import jobs_router
 from app.core.config import get_settings
 
 
