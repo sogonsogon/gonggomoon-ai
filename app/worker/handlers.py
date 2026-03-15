@@ -30,7 +30,7 @@ class JobHandler:
     # TODO : 여기서 job_type에 따라서 다른 처리를 할 수 있도록 해야 함.
     def handle(self, message: JobMessage) -> dict[str, Any]:
         if message.job_type == JobType.EXPERIENCE_EXTRACTION:
-            result = self.experience_processor.process(message.file_asset_id)
+            result = self.experience_processor.process(message.file_asset_ids)
         elif message.job_type == JobType.PORTFOLIO_STRATEGY_GENERATION:
             result = self.portfolio_strategy_processor.process(message)
         elif message.job_type == JobType.INTERVIEW_STRATEGY_GENERATION:
