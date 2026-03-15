@@ -9,7 +9,7 @@ class BaseJobMessage(BaseModel):
 
 
 class ExtractedExperienceMessage(BaseJobMessage):
-    file_asset_ids: list[int]
+    file_asset_ids: list[dict[str, int]]
     job_type: JobType = JobType.EXPERIENCE_EXTRACTION
 
 class PortfolioStrategyGenerationMessage(BaseJobMessage):

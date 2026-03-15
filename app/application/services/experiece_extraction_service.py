@@ -15,7 +15,8 @@ class ExperienceExtractionService:
         # 거기서 file_asset_id, user_id 등 필요한 정보도 같이 조회해서 JobMessage 생성에 활용
         file_asset_ids = []
         for extracted_experience in extracted_experiences:
-            file_asset_ids.append(extracted_experience.file_asset_id)
+            extrction_set = {"extracted_experience_id": extracted_experience.id, "file_asset_id": extracted_experience.file_asset_id}
+            file_asset_ids.append(extrction_set)
 
         # JobMessage 생성
         message = ExtractedExperienceMessage(
