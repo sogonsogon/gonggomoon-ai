@@ -3,6 +3,8 @@ from typing import Any
 from app.application.ports.ports import InterviewStrategyGeneratorPort, FileStorePort, PdfTextExtractorPort
 from app.application.ports.ports import FileAssetRepositoryPort
 from app.domain.file_asset.policies import validate_pdf_bytes
+from app.application.ports.ports import InterviewStrategyRepositoryPort
+from app.application.dto.dto import InterviewStrategyGenerationMessage
 
 
 class InterviewStrategyProcessor:
@@ -10,6 +12,7 @@ class InterviewStrategyProcessor:
             self,
             file_storage: FileStorePort,
             text_extractor: PdfTextExtractorPort,
+            interview_strategy_repository: InterviewStrategyRepositoryPort,
             file_asset_repository: FileAssetRepositoryPort,
             generator: InterviewStrategyGeneratorPort
         ):
@@ -17,9 +20,12 @@ class InterviewStrategyProcessor:
         self.file_storage = file_storage
         self.text_extractor = text_extractor
         self.file_asset_repository = file_asset_repository
-        
+        self.interview_strategy_repository = interview_strategy_repository
 
-    def process(self, file_asset_id: int) -> dict[str, Any]:
+    def process(self, message: InterviewStrategyGenerationMessage) -> dict[str, Any]:
+        # interview_strategy_repository에서 file_asset_id를 받아와야 함.
+        file_asset_id = self.interview_strategy_repository.get_file_asset_id(message.id)
+        
         # 여기서 file_asset_id로 DB에서 Key값을 조회해와야 함.
         file_key = self.file_asset_repository.get_file_key(file_asset_id)
 

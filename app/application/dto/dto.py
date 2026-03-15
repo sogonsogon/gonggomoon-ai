@@ -19,5 +19,4 @@ class PortfolioStrategyGenerationMessage(BaseJobMessage):
     job_type: JobType = JobType.PORTFOLIO_STRATEGY_GENERATION
 
 class InterviewStrategyGenerationMessage(BaseJobMessage):
-    file_asset_id: int
     job_type: JobType = JobType.INTERVIEW_STRATEGY_GENERATION

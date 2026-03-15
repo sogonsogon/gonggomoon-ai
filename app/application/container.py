@@ -13,6 +13,7 @@ from app.worker.handlers import JobHandler
 from app.infrastructure.pdf.pdf_text_extractor import PyMuPdfTextExtractor
 from app.infrastructure.db.session import create_session_factory
 from app.infrastructure.db.file_asset_repository import SqlAlchemyFileAssetRepository
+from app.infrastructure.db.interview_strategy_repository import SqlAlchemyInterviewStrategyRepository
 from app.infrastructure.db.extracted_experience_repository import SqlAlchemyExtractedExperienceRepository
 from app.application.services.experiece_extraction_service import ExperienceExtractionService
 from app.application.services.portfolio_strategy_generation_service import PortfolioStrategyGenerationService
@@ -58,6 +59,8 @@ file_store = (
 )
 
 file_asset_repository = SqlAlchemyFileAssetRepository(session_factory=session_factory)
+
+interview_strategy_repository = SqlAlchemyInterviewStrategyRepository(session_factory=session_factory)
 
 
 text_extractor = PyMuPdfTextExtractor()
@@ -107,6 +110,7 @@ interview_strategy_processor = InterviewStrategyProcessor(
     file_storage=file_store,
     text_extractor=text_extractor,
     file_asset_repository=file_asset_repository,
+    interview_strategy_repository=interview_strategy_repository,
     generator=interview_generator
 )
 

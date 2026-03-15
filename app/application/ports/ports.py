@@ -48,3 +48,7 @@ class FileAssetRepositoryPort(Protocol):
 class ExtractedExperienceRepositoryPort(Protocol):
     def get_extracted_experiences(self, extracted_experience_id: int) -> list[dict[str, Any]]:
         ...
+
+class InterviewStrategyRepositoryPort(Protocol):
+    def get_file_asset_id(self, interview_strategy_generation_message_id: int) -> int:
+        ...

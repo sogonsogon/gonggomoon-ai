@@ -34,10 +34,11 @@ class JobHandler:
         elif message.job_type == JobType.PORTFOLIO_STRATEGY_GENERATION:
             result = self.portfolio_strategy_processor.process(message)
         elif message.job_type == JobType.INTERVIEW_STRATEGY_GENERATION:
-            result = self.interview_strategy_processor.process(message.file_asset_id)
+            result = self.interview_strategy_processor.process(message)
         else:
             raise ValueError(f"Unsupported job type: {message.job_type}")
 
+        print(f"Processed job {message.id} of type {message.job_type}. Result: {result}")
         return {
             "type" : message.job_type.value,
             "id" : message.id, # 각 테스크 마다 받아온 아이디 값
