@@ -14,6 +14,7 @@ from app.infrastructure.db.file_asset_repository import SqlAlchemyFileAssetRepos
 from app.infrastructure.db.extracted_experience_repository import SqlAlchemyExtractedExperienceRepository
 from app.application.services.experiece_extraction_service import ExperienceExtractionService
 from app.application.services.portfolio_strategy_generation_service import PortfolioStrategyGenerationService
+from app.application.services.interview_strategy_generation_service import InterviewStrategyGenerationService   
 
 settings = get_settings()
 session_factory = create_session_factory(settings.database_url)
@@ -35,6 +36,11 @@ experience_extraction_service = ExperienceExtractionService(
 portfolio_strategy_generation_service = PortfolioStrategyGenerationService(
     queue=queue,
     callback_url=settings.call_back_url + "/portfolio-strategy-generation"
+)
+
+interview_strategy_generation_service = InterviewStrategyGenerationService(
+    queue=queue,
+    callback_url=settings.call_back_url + "/interview-strategy-generation"
 )
 
 
