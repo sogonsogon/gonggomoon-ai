@@ -29,6 +29,10 @@ class PortfolioStrategyGeneratorPort(Protocol):
     def generate(self, experiences: list[dict], position_type: str, industry_type: str) -> dict[str, Any]:
         ...
 
+class InterviewStrategyGeneratorPort(Protocol):
+    def generate(self, file_asset_id: int) -> dict[str, Any]:
+        ...
+
 class CallbackPort(Protocol):
     def send(self, callback_url: str, body: dict[str, Any]) -> None:
         ...

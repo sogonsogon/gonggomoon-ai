@@ -1,7 +1,7 @@
 from typing import Any
 
 from app.application.ports.ports import ExperienceAnalyzerPort, FileStorePort, PdfTextExtractorPort
-from app.domain.experience_extraction.policies import validate_pdf_bytes
+from app.domain.file_asset.policies import validate_pdf_bytes
 from app.application.ports.ports import FileAssetRepositoryPort
 
 # ExperienceExtractionProcessor는 PDF 파일에서 경험을 추출하는 핵심 비즈니스 로직을 담당합니다.  
