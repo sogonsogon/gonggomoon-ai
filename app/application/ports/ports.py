@@ -46,5 +46,5 @@ class FileAssetRepositoryPort(Protocol):
         ...
 
 class ExtractedExperienceRepositoryPort(Protocol):
-    def get_extracted_experience(self, extracted_experience_id: int) -> dict[str, Any]:
+    def get_extracted_experiences(self, extracted_experience_id: int) -> list[dict[str, Any]]:
         ...

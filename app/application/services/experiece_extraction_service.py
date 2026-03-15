@@ -10,16 +10,18 @@ class ExperienceExtractionService:
 
     def enqueue_experience_extraction(self, request: ExperienceExtractionRequest) -> None:
         # Repository에서 ExtractedExperience 조회
-        extracted_experience = self.repository.get_extracted_experience(request.extracted_experience_id)
+        extracted_experiences = self.repository.get_extracted_experiences(request.extracted_experience_ids)
 
         # 거기서 file_asset_id, user_id 등 필요한 정보도 같이 조회해서 JobMessage 생성에 활용
-
+        file_asset_ids = []
+        for extracted_experience in extracted_experiences:
+            file_asset_ids.append(extracted_experience.file_asset_id)
 
         # JobMessage 생성
         message = ExtractedExperienceMessage(
             id=extracted_experience.id,
             user_id=extracted_experience.user_id,
-            file_asset_id=extracted_experience.file_asset_id,
+            file_asset_ids=file_asset_ids,
             callback_url=self.callback_url
         )
 
