@@ -3,7 +3,8 @@
 from fastapi import APIRouter, Header, status
 from app.api.dependencies.auth import verify_internal_api_key
 from app.api.dto.experience_extraction import ExperienceExtractionRequest
-from app.application.container import queue, experience_extraction_service
+from app.api.dto.portfolio_strategy_generation import PortfolioStrategyGenerationRequest
+from app.application.container import queue, experience_extraction_service, portfolio_strategy_generation_service
 
 jobs_router = APIRouter(prefix="/api/v1/jobs", tags=["jobs"])
 
@@ -22,6 +23,13 @@ def extract_experience(
     # 실제 작업 처리는 백그라운드에서 워커가 담당하므로, API는 즉시 응답을 반환함.
     return experience_extraction_service.enqueue_experience_extraction(request)
 
+@jobs_router.post("/portfolio-strategy-generation", response_model=None, status_code=status.HTTP_202_ACCEPTED)
+def generate_portfolio_strategy(
+    request: PortfolioStrategyGenerationRequest,
+    x_internal_api_key: str | None = Header(default=None),
+) -> None:
+    verify_internal_api_key(x_internal_api_key)
+    return portfolio_strategy_generation_service.enqueue_portfolio_strategy_generation(request)
 
 # 큐에 쌓인 작업 수를 조회하는 엔드포인트 - AI 서버에서 작업 처리 상태 모니터링 용도
 # 지금 굳이 필요한가 싶음
