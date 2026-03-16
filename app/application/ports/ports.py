@@ -52,3 +52,16 @@ class ExtractedExperienceRepositoryPort(Protocol):
 class InterviewStrategyRepositoryPort(Protocol):
     def get_file_asset_id(self, interview_strategy_generation_message_id: int) -> int:
         ...
+
+# Post analysis 관련 포트
+class PostAnalyzerPort(Protocol):
+    def analyze(self, company_name:str, company_description:str, post_content:str) -> dict[str, Any]:
+        ...
+
+class CompanyRepositoryPort(Protocol):
+    def get_company_info(self, company_id: int) -> dict[str, Any]:
+        ...
+
+class PostRepositoryPort(Protocol):
+    def get_post_info(self, post_id: int) -> dict[str, Any]:
+        ...

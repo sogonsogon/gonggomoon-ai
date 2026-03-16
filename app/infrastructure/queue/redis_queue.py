@@ -4,6 +4,7 @@ from app.application.ports.ports import JobQueuePort
 import json
 
 from app.application.dto.dto import (
+    BaseJobMessage,
     ExtractedExperienceMessage,
     PortfolioStrategyGenerationMessage,
     InterviewStrategyGenerationMessage
@@ -37,6 +38,9 @@ class RedisJobQueue(JobQueuePort):
         
         if job_type == JobType.INTERVIEW_STRATEGY_GENERATION.value:
             return InterviewStrategyGenerationMessage.model_validate(data)
+        
+        if job_type == JobType.POST_ANALYSIS.value:
+            return BaseJobMessage.model_validate(data)
 
         raise ValueError(f"Unsupported job_type in queue: {job_type}")
     def size(self) -> int:

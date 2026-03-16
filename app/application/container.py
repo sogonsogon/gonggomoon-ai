@@ -2,11 +2,13 @@ from app.core.config import get_settings
 from app.domain.experience_extraction.processor import ExperienceExtractionProcessor
 from app.domain.portfolio_strategy_generation.processor import PortfolioStrategyProcessor
 from app.domain.interview_strategy_generation.processor import InterviewStrategyProcessor
+from app.domain.post_analysis.processor import PostAnalysisProcessor
 from app.infrastructure.clients.callback_client import HttpCallbackClient
 from app.infrastructure.clients.file_store import S3FileStore
 from app.infrastructure.clients.llm_analyzer import GeminiExperienceAnalyzer
 from app.infrastructure.clients.llm_generator import GeminiPortfolioStrategyGenerator
 from app.infrastructure.clients.interview_generator import GeminiInterviewStrategyGenerator
+from app.infrastructure.clients.post_analzer import GeminiPostAnalyzer
 from app.infrastructure.queue.redis_queue import RedisJobQueue
 from app.worker.executor import WorkerExecutor
 from app.worker.handlers import JobHandler
@@ -15,6 +17,8 @@ from app.infrastructure.db.session import create_session_factory
 from app.infrastructure.db.file_asset_repository import SqlAlchemyFileAssetRepository
 from app.infrastructure.db.interview_strategy_repository import SqlAlchemyInterviewStrategyRepository
 from app.infrastructure.db.extracted_experience_repository import SqlAlchemyExtractedExperienceRepository
+from app.infrastructure.db.post_repository import SqlAlchemyPostRepository
+from app.infrastructure.db.company_repository import SqlAlchemyCompanyRepository
 from app.application.services.experiece_extraction_service import ExperienceExtractionService
 from app.application.services.portfolio_strategy_generation_service import PortfolioStrategyGenerationService
 from app.application.services.interview_strategy_generation_service import InterviewStrategyGenerationService
@@ -66,8 +70,10 @@ file_store = (
 )
 
 file_asset_repository = SqlAlchemyFileAssetRepository(session_factory=session_factory)
-
 interview_strategy_repository = SqlAlchemyInterviewStrategyRepository(session_factory=session_factory)
+company_repository =  SqlAlchemyCompanyRepository(session_factory=session_factory)
+post_repository = SqlAlchemyPostRepository(session_factory=session_factory)
+
 
 
 text_extractor = PyMuPdfTextExtractor()
@@ -99,6 +105,15 @@ interview_generator = (
     else Exception("Gemini API 키가 설정되어 있지 않습니다.")
 )
 
+post_analyzer = (
+    GeminiPostAnalyzer(
+        api_key=settings.gemini_api_key,
+        model=settings.gemini_model,
+    )
+    if settings.gemini_api_key
+    else Exception("Gemini API 키가 설정되어 있지 않습니다.")
+)
+
 # 경험 추출 프로세서 (pdf에서 경험을 추출하는 핵심 비즈니스 로직 담당)
 experience_processor = ExperienceExtractionProcessor(
     file_store=file_store,
@@ -121,10 +136,18 @@ interview_strategy_processor = InterviewStrategyProcessor(
     generator=interview_generator
 )
 
+# 공고 분석 프로세서
+post_analysis_processor = PostAnalysisProcessor(
+    post_analyzer=post_analyzer,
+    company_repository= company_repository,
+    post_repository= post_repository,
+)
+
 job_handler = JobHandler(
     experience_processor=experience_processor,
     portfolio_strategy_processor=portfolio_strategy_processor,
-    interview_strategy_processor=interview_strategy_processor
+    interview_strategy_processor=interview_strategy_processor,
+    post_analysis_processor=post_analysis_processor
 )
 
 

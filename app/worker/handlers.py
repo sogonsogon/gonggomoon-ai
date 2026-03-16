@@ -6,6 +6,7 @@ from app.core.enums import JobType
 from app.domain.experience_extraction.processor import ExperienceExtractionProcessor
 from app.domain.portfolio_strategy_generation.processor import PortfolioStrategyProcessor
 from app.domain.interview_strategy_generation.processor import InterviewStrategyProcessor
+from app.domain.post_analysis.processor import PostAnalysisProcessor
 from app.application.dto.dto import PortfolioStrategyGenerationMessage, ExtractedExperienceMessage, InterviewStrategyGenerationMessage
 
 from typing import Union
@@ -21,11 +22,13 @@ class JobHandler:
     def __init__(self, 
                  experience_processor: ExperienceExtractionProcessor, 
                  portfolio_strategy_processor: PortfolioStrategyProcessor,
-                 interview_strategy_processor: InterviewStrategyProcessor
+                 interview_strategy_processor: InterviewStrategyProcessor,
+                 post_analysis_processor: PostAnalysisProcessor
                  ) -> None:
         self.experience_processor = experience_processor
         self.portfolio_strategy_processor = portfolio_strategy_processor
         self.interview_strategy_processor = interview_strategy_processor
+        self.post_analysis_processor = post_analysis_processor
 
     # TODO : 여기서 job_type에 따라서 다른 처리를 할 수 있도록 해야 함.
     def handle(self, message: JobMessage) -> dict[str, Any]:
@@ -35,6 +38,8 @@ class JobHandler:
             result = self.portfolio_strategy_processor.process(message)
         elif message.job_type == JobType.INTERVIEW_STRATEGY_GENERATION:
             result = self.interview_strategy_processor.process(message)
+        elif message.job_type == JobType.POST_ANALYSIS:
+            result = self.post_analysis_processor.process(message.id)
         else:
             raise ValueError(f"Unsupported job type: {message.job_type}")
 
