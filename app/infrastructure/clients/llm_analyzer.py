@@ -27,6 +27,10 @@ class GeminiExperienceAnalyzer(ExperienceAnalyzerPort):
             - experienceType must be one of: PROJECT, CAREER, EDUCATION, COMPETITION, OTHER
             - If a date is unknown, use null
             - Prefer YYYY-MM format for dates
+            - startDate and endDate must be either:
+                - null
+                - or a string in yyyy-MM format
+            - Do not output year-only values like "2025".
             - All string values must be written in Korean
             - Keep experienceType values exactly as enum values: PROJECT, CAREER, EDUCATION, COMPETITION, OTHER
             - You can extract experience from up to 10 target experiences.
