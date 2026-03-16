@@ -17,7 +17,8 @@ from app.infrastructure.db.interview_strategy_repository import SqlAlchemyInterv
 from app.infrastructure.db.extracted_experience_repository import SqlAlchemyExtractedExperienceRepository
 from app.application.services.experiece_extraction_service import ExperienceExtractionService
 from app.application.services.portfolio_strategy_generation_service import PortfolioStrategyGenerationService
-from app.application.services.interview_strategy_generation_service import InterviewStrategyGenerationService   
+from app.application.services.interview_strategy_generation_service import InterviewStrategyGenerationService
+from app.application.services.post_analysis_service import PostAnalysisService
 
 settings = get_settings()
 session_factory = create_session_factory(settings.database_url)
@@ -44,6 +45,12 @@ portfolio_strategy_generation_service = PortfolioStrategyGenerationService(
 interview_strategy_generation_service = InterviewStrategyGenerationService(
     queue=queue,
     callback_url=settings.call_back_url + "/interview-strategy-generation"
+)
+
+# NOTE : Post Analysis Service는 백오피스에서 사용할 예정이므로, 콜백 URL이 다릅니다.
+post_analysis_service = PostAnalysisService(
+    queue=queue,
+    callback_url=settings.backoffice_callback_url + "/post-analysis"
 )
 
 
