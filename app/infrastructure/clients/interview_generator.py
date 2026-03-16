@@ -44,6 +44,7 @@ class GeminiInterviewStrategyGenerator(InterviewStrategyGeneratorPort):
             - All string values must be written in Korean
             - Do not include markdown, code fences, explanations, or extra keys
             - Generate 5 interview questions
+            - Questions must not exceed 200 characters
             - Each question must be based on the user's actual resume content
             - Prefer questions that deeply examine the user's real experiences, decisions, trade-offs, problem solving, and technical understanding
             - Avoid duplicate or overly similar questions

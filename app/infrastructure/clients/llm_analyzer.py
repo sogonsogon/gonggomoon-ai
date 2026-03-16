@@ -29,6 +29,8 @@ class GeminiExperienceAnalyzer(ExperienceAnalyzerPort):
             - Prefer YYYY-MM format for dates
             - All string values must be written in Korean
             - Keep experienceType values exactly as enum values: PROJECT, CAREER, EDUCATION, COMPETITION, OTHER
+            - You can extract experience from up to 10 target experiences.
+            - Experiences should not be duplicated, and if there are no experiences to extract, you don't have to extract them.
 
             resume_text:
             {resume_text}
