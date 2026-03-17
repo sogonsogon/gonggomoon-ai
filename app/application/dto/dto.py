@@ -19,4 +19,5 @@ class PortfolioStrategyGenerationMessage(BaseJobMessage):
     job_type: JobType = JobType.PORTFOLIO_STRATEGY_GENERATION
 
 class InterviewStrategyGenerationMessage(BaseJobMessage):
-    job_type: JobType = JobType.INTERVIEW_STRATEGY_GENERATION
+    job_type: JobType = JobType.INTERVIEW_STRATEGY_GENERATION\
+    

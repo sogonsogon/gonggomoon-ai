@@ -20,6 +20,7 @@ class Settings:
     gemini_api_key: str | None = None
     gemini_model: str = "gemini-2.5-flash"
     call_back_url: str | None = None
+    backoffice_callback_url: str | None = None
 
 
 def get_settings() -> Settings:
@@ -38,4 +39,5 @@ def get_settings() -> Settings:
         gemini_api_key=getenv("GEMINI_API_KEY"),
         gemini_model=getenv("GEMINI_MODEL", "gemini-2.5-flash"),
         call_back_url=getenv("CALLBACK_URL", ""),
+        backoffice_callback_url=getenv("BACKOFFICE_CALLBACK_URL", ""),
     )

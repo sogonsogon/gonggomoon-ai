@@ -5,7 +5,8 @@ from app.api.dependencies.auth import verify_internal_api_key
 from app.api.dto.experience_extraction import ExperienceExtractionRequest
 from app.api.dto.portfolio_strategy_generation import PortfolioStrategyGenerationRequest
 from app.api.dto.interview_strategy_generation import InterviewStrategyGenerationRequest
-from app.application.container import queue, experience_extraction_service, portfolio_strategy_generation_service, interview_strategy_generation_service
+from app.api.dto.post_analysis_request import PostAnalysisRequest
+from app.application.container import queue, experience_extraction_service, portfolio_strategy_generation_service, interview_strategy_generation_service, post_analysis_service
 
 jobs_router = APIRouter(prefix="/api/v1/jobs", tags=["jobs"])
 
@@ -39,6 +40,14 @@ def generate_interview_strategy(
 ) -> None:
     verify_internal_api_key(x_internal_api_key)
     return interview_strategy_generation_service.enqueue_interview_strategy_generation(request)
+
+@jobs_router.post("/post-analysis", response_model=None, status_code=status.HTTP_202_ACCEPTED)
+def analyze_post(
+    request: PostAnalysisRequest,
+    x_internal_api_key: str | None = Header(default=None),
+) -> None:
+    verify_internal_api_key(x_internal_api_key)
+    return post_analysis_service.enqueue_post_analysis(request)
 
 # 큐에 쌓인 작업 수를 조회하는 엔드포인트 - AI 서버에서 작업 처리 상태 모니터링 용도
 # 지금 굳이 필요한가 싶음
