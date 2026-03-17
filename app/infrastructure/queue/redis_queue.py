@@ -1,14 +1,14 @@
-from redis import Redis
-
-from app.application.ports.ports import JobQueuePort
 import json
+
+from redis import Redis
 
 from app.application.dto.dto import (
     BaseJobMessage,
     ExtractedExperienceMessage,
+    InterviewStrategyGenerationMessage,
     PortfolioStrategyGenerationMessage,
-    InterviewStrategyGenerationMessage
 )
+from app.application.ports.ports import JobQueuePort
 from app.core.enums import JobType
 
 
@@ -18,10 +18,10 @@ class RedisJobQueue(JobQueuePort):
         self.client = Redis.from_url(redis_url, decode_responses=True)
         self.queue_key = queue_key
 
-    def enqueue(self, message) -> None:
+    def enqueue(self, message: BaseJobMessage) -> None:
         self.client.rpush(self.queue_key, message.model_dump_json())
 
-    def dequeue(self):
+    def dequeue(self) -> BaseJobMessage | None:
         payload = self.client.lpop(self.queue_key)
         if payload is None:
             return None
@@ -43,5 +43,6 @@ class RedisJobQueue(JobQueuePort):
             return BaseJobMessage.model_validate(data)
 
         raise ValueError(f"Unsupported job_type in queue: {job_type}")
+
     def size(self) -> int:
         return int(self.client.llen(self.queue_key))

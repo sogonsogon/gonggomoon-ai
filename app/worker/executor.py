@@ -1,3 +1,7 @@
+from datetime import datetime, timezone
+
+from app.application.dto.dto import BaseJobMessage
+from app.core.enums import JobStatus, JobType
 from app.application.ports.ports import CallbackPort, JobQueuePort
 from app.worker.handlers import JobHandler
 
@@ -17,7 +21,58 @@ class WorkerExecutor:
         if message is None:
             return False
 
-        # 콜백 Body가 JobType마다 달라질 수 있지 않나 ?
-        callback_body = self.handler.handle(message)
-        self.callback_client.send(message.callback_url, callback_body)
+        try:
+            # 콜백 Body가 JobType마다 달라질 수 있지 않나 ?
+            callback_body = self.handler.handle(message)
+            self._send_callback(message, callback_body)
+        except Exception as exc:
+            if message.attempt_count < message.max_attempts:
+                message.attempt_count += 1
+                print(
+                    f"Retrying job {message.id} of type {message.job_type}. "
+                    f"Attempt {message.attempt_count}/{message.max_attempts}. Error: {exc}"
+                )
+                self.queue.enqueue(message)
+            else:
+                print(
+                    f"Job {message.id} of type {message.job_type} failed after "
+                    f"{message.max_attempts} attempts. Error: {exc}"
+                )
+                self._send_failure_callback(message, exc)
         return True
+
+    def _send_callback(self, message: BaseJobMessage, body: dict) -> None:
+        if message.callback_url:
+            self.callback_client.send(message.callback_url, body)
+
+    def _send_failure_callback(self, message: BaseJobMessage, exc: Exception) -> None:
+        if not message.callback_url:
+            return
+        
+        failure_body = {
+            "type": message.job_type.value,
+            "id": message.id,
+            "user_id": str(message.user_id),
+            "status": JobStatus.FAILED.value,
+            "result" : None,
+            "error": str(exc),
+            "attempt_count": message.attempt_count,
+            "processed_at": datetime.now(timezone.utc).isoformat(),
+        }
+        
+        if message.job_type == JobType.EXPERIENCE_EXTRACTION:
+            failure_body["result"] = [
+                {
+                    "extracted_experience_id": item.get("extracted_experience_id"),
+                    "file_asset_id": item.get("file_asset_id"),
+                }
+                for item in message.file_asset_ids
+            ]
+
+        try:
+            self.callback_client.send(message.callback_url, failure_body)
+        except Exception as callback_exc:
+            print(
+                f"Failed to send failure callback for job {message.id} "
+                f"of type {message.job_type}. Error: {callback_exc}"
+            )
