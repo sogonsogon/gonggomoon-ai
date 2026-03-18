@@ -1,15 +1,15 @@
 from typing import Any, Protocol
 
-from app.application.dto.dto import ExtractedExperienceMessage
+from app.application.dto.dto import BaseJobMessage
 
 
 # JobQueuePort는 작업 메시지를 큐에 넣고 빼는 인터페이스를 정의합니다.
 # TODO : ExtractedExperienceMessage 대신 좀 더 범용적인 JobMessage로 리팩토링하는 것을 고려해보자.
 class JobQueuePort:
-    def enqueue(self, message: ExtractedExperienceMessage) -> None:
+    def enqueue(self, message: BaseJobMessage) -> None:
         raise NotImplementedError
 
-    def dequeue(self) -> ExtractedExperienceMessage | None:
+    def dequeue(self) -> BaseJobMessage | None:
         raise NotImplementedError
 
     def size(self) -> int:

@@ -5,7 +5,8 @@
 1. `POST /api/v1/jobs/{ai_function}` 요청 수신
 2. Redis queue 에 작업 enqueue
 3. Worker 가 dequeue 후 파일 다운로드/LLM 분석
-4. 분석 결과를 callback URL 로 POST
+4. 실패 시 최대 3회까지 재시도
+5. 분석 결과를 callback URL 로 POST
 
 ## Run
 
@@ -22,4 +23,3 @@
 - API: `api` 서비스 (`8000` 포트)
 - Worker: `worker` 서비스
 - Redis: `redis` 서비스
-

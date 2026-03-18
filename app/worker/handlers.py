@@ -1,17 +1,21 @@
 from datetime import datetime, timezone
 from typing import Any
-
-from app.application.dto.dto import ExtractedExperienceMessage
-from app.core.enums import JobType
-from app.domain.experience_extraction.processor import ExperienceExtractionProcessor
-from app.domain.portfolio_strategy_generation.processor import PortfolioStrategyProcessor
-from app.domain.interview_strategy_generation.processor import InterviewStrategyProcessor
-from app.domain.post_analysis.processor import PostAnalysisProcessor
-from app.application.dto.dto import PortfolioStrategyGenerationMessage, ExtractedExperienceMessage, InterviewStrategyGenerationMessage
-
 from typing import Union
 
+from app.application.dto.dto import (
+    BaseJobMessage,
+    ExtractedExperienceMessage,
+    InterviewStrategyGenerationMessage,
+    PortfolioStrategyGenerationMessage,
+)
+from app.core.enums import JobStatus, JobType
+from app.domain.experience_extraction.processor import ExperienceExtractionProcessor
+from app.domain.interview_strategy_generation.processor import InterviewStrategyProcessor
+from app.domain.post_analysis.processor import PostAnalysisProcessor
+from app.domain.portfolio_strategy_generation.processor import PortfolioStrategyProcessor
+
 JobMessage = Union[
+    BaseJobMessage,
     ExtractedExperienceMessage,
     PortfolioStrategyGenerationMessage,
     InterviewStrategyGenerationMessage
@@ -48,7 +52,7 @@ class JobHandler:
             "type" : message.job_type.value,
             "id" : message.id, # 각 테스크 마다 받아온 아이디 값
             "user_id": str(message.user_id),
-            "status": "COMPLETED",
+            "status": JobStatus.COMPLETED.value,
             "result": result,
             "processed_at": datetime.now(timezone.utc).isoformat(),
         }
