@@ -2,7 +2,7 @@ name: Deploy AI Server to Private EC2
 
 on:
   push:
-    branches: [ "main", "develop" ]
+    branches: [ "main" ]
 
 permissions:
   contents: read
